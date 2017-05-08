@@ -1,0 +1,62 @@
+This is a testing file. Everything should be ignored at the beginning. We test
+a variety of different edge cases that the program should be able to handle.
+Expected responses are in unit_test_expected_output.txt.
+
+Some cases to be tested:
+	I.   Changing an electron from the base configuration when that electron is
+	     present
+	II.  Going from one entirely filled energy level to two half-filled
+	III. Creating a filled level by moving an electron from a half-filled state
+
+For simplicity, each configuration is given a square-root probability value of
+0.5 to start, so each configuration will have a final probability of 0.25.
+
+The configurations should do the following:
+	- The initial configuration (1) starts out with a hole in 4a, since 4a
+	  has an electron and so does 5a. It will contribute 0.25 to the 4a
+	  hole category of output.
+	- Configuration (2) moves an electron of "/" to 4a from 5a, making 4a become
+	  filled. This also has no holes, so it should contribute 0.25 to the 
+	  no-hole category of output. This tests (III).
+	- Configuration (3) moves an electron from 1b, which is filled, to
+	  4a, which should make 1b half-filled and make 4a filled. This will
+	  contribute 0.25 to the no hole category of output. This tests (I) and (III).
+	- Configuraton (4) moves an electron from 4a to 5a to make 5a filled.
+	  It then moves an electron from 3a to 5a. This makes both 3a and 4a holes,
+	  and should contribute 0.25 to the hole in 3a and 4a category of output.
+	  3a will be counted as two holes because it is below both the filled 5a
+	  and the half-filled 4a. This tests both (I) and (III).
+	- Configuration (5) filles 4a with an electron from 5a. Then it moves an
+	  electron from 1b to 2b, causing 1b to become the sole hole, since it has
+	  a single electron and 2b also has an electron. This will contribute 0.25
+	  to the 1b hole category of output. This tests (II).
+
+	Overall, therefore, there should be 0.5 in the category of no hole, 0.25 in
+	the category of a hole in 4a, 0.25 in the category of a hole in 3a and 54a,
+	and 0.25 in the category of a hole in 1b.
+
+
+most important configurations for root  1
+
+    1  0.5   0.4432  27174
+          2-   3a  x  
+          4a  \\ 
+          5a  /     
+          1b  x  
+          2b     
+          1a  x  
+          3-  20b     
+          7-  34a     
+         35a    
+         36-  57a     
+    2  0.5   0.5443  27241
+        5a  /-->  4a  /
+    3  0.5   0.6181  27182
+        1b  /--> 4a  /
+    4  0.5   0.6181  27182
+    	4a  \--> 5a  \
+        3a  /--> 6a  /
+    4  0.5   0.6181  27182
+    	5a  /--> 4a  /
+        1b  /--> 2b  /
+     number of electrons:   10.000000000000
