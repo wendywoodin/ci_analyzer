@@ -17,7 +17,8 @@ from config import Config
 ROOT_START = "most important configurations for root"
 ROOT_END = "number of electrons"
 
-def run(in_filename, out_file="", verbose=False):
+def run(in_filename, out_file="", verbose=False, base_file=""):
+	base_config = Config.get_base_config_from_file(base_file)
 	f = open(in_filename, 'r')
 	roots = []
 
@@ -50,16 +51,16 @@ def run(in_filename, out_file="", verbose=False):
 				if first is None and lineset == []:
 					lineset.append(line)
 				elif first is None:
-					first = Config(lineset)
+					first = Config(lineset, base_config=base_config)
 					configs[i].append(first)
 					lineset = [line]
 				else:
-					new = Config(lineset, first)
+					new = Config(lineset, first, base_config)
 					configs[i].append(new)
 					lineset = [line]
 			elif lineset != []:
 				lineset.append(line)
-		new = Config(lineset, first)
+		new = Config(lineset, first, base_config)
 		configs[i].append(new)
 
 	output_fname = out_file if out_file else in_filename + "_res"
@@ -99,7 +100,9 @@ if __name__ == "__main__":
                    help='the input file to the program')
 	parser.add_argument("-outfile", "-o", metavar='OUTFILE', type=str,
                    help='optional name of output file')
+	parser.add_argument("base_config", metavar='BASE_CONFIG', type=str,
+                   help='file containing the base configuration')
 	parser.add_argument("--verbose", "-v", help="increase output verbosity",
                     action="store_true")
 	args = parser.parse_args()
-	run(args.infile, args.outfile, args.verbose)
+	run(args.infile, out_file=args.outfile, verbose=args.verbose, base_file=args.base_config)

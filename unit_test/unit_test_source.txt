@@ -20,12 +20,10 @@ The configurations should do the following:
 	  no-hole category of output. This tests (III).
 	- Configuration (3) moves an electron from 1b, which is filled, to
 	  4a, which should make 1b half-filled and make 4a filled. This will
-	  contribute 0.25 to the no hole category of output. This tests (I) and (III).
+	  contribute 0.25 to the 1b hole category of output. This tests (I) and (III).
 	- Configuraton (4) moves an electron from 4a to 5a to make 5a filled.
 	  It then moves an electron from 3a to 5a. This makes both 3a and 4a holes,
 	  and should contribute 0.25 to the hole in 3a and 4a category of output.
-	  3a will be counted as two holes because it is below both the filled 5a
-	  and the half-filled 4a. This tests both (I) and (III).
 	- Configuration (5) filles 4a with an electron from 5a. Then it moves an
 	  electron from 1b to 2b, causing 1b to become the sole hole, since it has
 	  a single electron and 2b also has an electron. This will contribute 0.25

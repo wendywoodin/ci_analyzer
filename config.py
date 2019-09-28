@@ -1,7 +1,7 @@
 import copy
 
 class Config():
-	def __init__(self, lineset=None, prev_config=None):
+	def __init__(self, lineset=None, prev_config=None, base_config=None):
 		self.elec = {
 						"\\" : {}, 
 					 	"/": {}, 
@@ -10,6 +10,7 @@ class Config():
 		self.prob = 0
 		self.holes = []
 		self.e_lets = []
+		self.base_config = base_config
 
 		# This means we are working with the first config and it will
 		# have to create a new config from scratch
@@ -20,8 +21,25 @@ class Config():
 		else:
 			print "Error creating configuration"
 		self.calculate_holes()
-		self.holes.sort()
-			
+		self.holes.sort()			
+
+	@staticmethod
+	def get_base_config_from_file(fname):
+		base_config = {"x": [], "/": []}
+		with open(fname, "r") as f:
+			for line in f:
+				state = line.strip().split()[0]
+				fill = int(line.strip().split()[1])
+				if fill == 2:
+					base_config["x"].append(state)
+				elif fill == 1:
+					base_config["/"].append(state)
+			        else:
+					print("ERROR: Failure parsing base config")
+					exit(1)
+		return base_config
+
+
 	def from_scratch(self, lineset):
 		# This relies heavily on the formatting of the initial file
 		self.prob = float(lineset[0].split()[1])**2
@@ -84,38 +102,36 @@ class Config():
 	def calculate_holes(self):
 		# This function is just very nitty-gritty, it will take a lot of specific case checking
 		# This means that if something somewhere else changes this will likely break
-
 		hfill = ["/", "\\"]
-
-		for e_let in self.e_lets:
-			# First check for holes in the double filled, it's a bit of a special case
-			if self.elec["x"][e_let]:
-				a_max_filled = max(self.elec["x"][e_let])
-				missing = [i for i in range(1, a_max_filled) if i not in self.elec["x"][e_let]]
-				for miss in missing:
-					found = False
-					if miss in self.elec["/"][e_let]:
-						self.holes.append(str(miss)+e_let+"/")
-						found = True
-					if miss in self. elec["\\"][e_let]:
-						self.holes.append(str(miss)+e_let+"\\")
-						found = True
-					if not found:
-						self.holes.append(str(miss)+e_let+"-")
-
-			for i, lf in enumerate(hfill):
-				if not self.elec[lf][e_let]:
-					continue
-				try:
-					max_fill = max(self.elec[lf][e_let])
-				except:
-					print self.elec[lf][e_let]
-					continue
-				oth = hfill[(i + 1) % 2]
-				missing = [j for j in self.elec[lf][e_let].union(self.elec[oth][e_let]) if j < max_fill]
-				for miss in missing:
-					if miss in self.elec[lf][e_let]:
-						self.holes.append(str(miss)+e_let+lf)
-					elif miss in self.elec[oth][e_let]:
-						self.holes.append(str(miss)+e_let+oth)
-
+		# Start by checking the full fills
+		for state in self.base_config["x"]:
+			let = state[-1]
+			num = int(state[:-1])
+			found = True
+			if let not in self.elec["x"].keys():
+				found = False
+			elif num not in self.elec["x"][let]:
+				found = False
+			if not found:
+				hole = None
+				if let in self.elec["/"].keys() and num in self.elec["/"][let]:
+					hole = "/"
+				elif let in self.elec["\\"].keys() and num in self.elec["\\"][let]:
+					hole = "\\"
+			        else:
+					hole = "-"
+				self.holes.append(state+hole)
+		
+		# Now check for hfill
+		for state in self.base_config["/"]:
+			let = state[-1]
+			num = int(state[:-1])
+			found = False
+			if let in self.elec["/"].keys():
+				if num in self.elec["/"][let]:
+					found = True
+			if let in self.elec["\\"].keys():
+				if num in self.elec["\\"][let]:
+					found = True
+			if not found:
+				self.holes.append(state+"-")
