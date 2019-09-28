@@ -13,7 +13,7 @@ def create_dict_from_file(f):
 			d[res[0]] = float(res[1])
 	return d
 
-get_av_probs.run("unit_test_source.txt")
+get_av_probs.run("unit_test_source.txt", "test_results.txt")
 
 output_file = open("test_results.txt")
 expected_file = open("unit_test_expected_output.txt")
